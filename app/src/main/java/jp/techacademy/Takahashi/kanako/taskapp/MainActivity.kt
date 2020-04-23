@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun reloadListView() {
         // Realmデータベースから、「全てのデータを取得して新しい日時順に並べた結果」を取得
         val taskRealmResults = mRealm.where(Task::class.java).findAll().sort("date", Sort.DESCENDING)
@@ -118,14 +117,4 @@ class MainActivity : AppCompatActivity() {
         mRealm.close()
     }
 
-    private fun addTaskForTest() {
-        val task = Task()
-        task.title = "作業"
-        task.contents = "プログラムを書いてPUSHする"
-        task.date = Date()
-        task.id = 0
-        mRealm.beginTransaction()
-        mRealm.copyToRealmOrUpdate(task)
-        mRealm.commitTransaction()
-    }
 }

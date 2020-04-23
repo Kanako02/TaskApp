@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import kotlinx.android.synthetic.main.content_input.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TaskAdapter(context: Context): BaseAdapter(){
 
     private val mLayoutInflater: LayoutInflater
+    //アイテムを保持するタスクリスト＜タスク＞を定義
     var taskList = mutableListOf<Task>()
 
     init {
@@ -33,6 +35,8 @@ class TaskAdapter(context: Context): BaseAdapter(){
         return view
     }
 
+
+    //タスクリストの要素を返す
     override fun getItem(position: Int): Any {
         return taskList[position]
     }
@@ -41,6 +45,7 @@ class TaskAdapter(context: Context): BaseAdapter(){
         return taskList[position].id.toLong()
     }
 
+    //タスクリストのサイズ
     override fun getCount(): Int {
         return taskList.size
     }
