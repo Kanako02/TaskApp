@@ -4,16 +4,13 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
+import android.widget.Button
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 const val EXTRA_TASK = "jp.techacademy.taro.Takahashi.kanako.TASK"
 
@@ -91,6 +88,28 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
 
             true
+        }
+
+        //検索ボタン
+        search_button.setOnClickListener{view ->
+
+            val searchWord = search_edit_text.text.toString()
+
+
+            if (searchWord == null){
+                reloadListView()
+            }else{
+                val taskRealmResults = mRealm.where(Task::class.java).equalTo("category",searchWord).findAll().sort("date", Sort.DESCENDING)
+
+                mTaskAdapter.taskList = mRealm.copyFromRealm(taskRealmResults)
+
+                // TaskのListView用のアダプタに渡す
+                listView1.adapter = mTaskAdapter
+
+                // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+                mTaskAdapter.notifyDataSetChanged()
+            }
+
         }
 
         reloadListView()
