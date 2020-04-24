@@ -20,7 +20,12 @@ class InputActivity : AppCompatActivity() {
     private var mDay = 0
     private var mHour = 0
     private var mMinute = 0
+
+    //タスククラスのオブジェクト
     private var mTask: Task? = null
+
+    //カテゴリークラスのオブジェクト
+    //private var mCategory:Category? =null
 
     private val mOnDateClickListener = View.OnClickListener {
         val datePickerDialog = DatePickerDialog(this,
@@ -103,6 +108,7 @@ class InputActivity : AppCompatActivity() {
         }
     }
 
+    //タスク
     private fun addTask() {
         val realm = Realm.getDefaultInstance()
 

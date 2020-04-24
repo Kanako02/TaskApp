@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             val searchWord = search_edit_text.text.toString()
 
 
-            if (searchWord == null){
+            if (searchWord == ""){
                 reloadListView()
             }else{
                 val taskRealmResults = mRealm.where(Task::class.java).equalTo("category",searchWord).findAll().sort("date", Sort.DESCENDING)
