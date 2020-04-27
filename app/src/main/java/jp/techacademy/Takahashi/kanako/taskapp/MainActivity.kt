@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        //検索ボタン
+        /*検索ボタン
         search_button.setOnClickListener{view ->
 
             val searchWord = search_edit_text.text.toString()
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 mTaskAdapter.notifyDataSetChanged()
             }
 
-        }
+        }*/
 
         reloadListView()
     }

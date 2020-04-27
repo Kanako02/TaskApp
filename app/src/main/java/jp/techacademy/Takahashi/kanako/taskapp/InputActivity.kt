@@ -10,7 +10,9 @@ import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.View
 import io.realm.Realm
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_input.*
+import kotlinx.android.synthetic.main.content_inputcategory.*
 import java.util.*
 
 class InputActivity : AppCompatActivity() {
@@ -25,7 +27,7 @@ class InputActivity : AppCompatActivity() {
     private var mTask: Task? = null
 
     //カテゴリークラスのオブジェクト
-    //private var mCategory:Category? =null
+    private var mCategory:Category? =null
 
     private val mOnDateClickListener = View.OnClickListener {
         val datePickerDialog = DatePickerDialog(this,
@@ -62,6 +64,11 @@ class InputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input)
 
+            category_button.setOnClickListener { view ->
+            val intent = Intent(this@InputActivity, CategoryActivity::class.java)
+            startActivity(intent)
+        }
+
         // ActionBarを設定する
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -93,7 +100,7 @@ class InputActivity : AppCompatActivity() {
             // 更新の場合
             title_edit_text.setText(mTask!!.title)
             content_edit_text.setText(mTask!!.contents)
-            category_edit_text.setText(mTask!!.category)
+            //category_edit_text.setText(mTask!!.category)
 
             val calendar = Calendar.getInstance()
             calendar.time = mTask!!.date
@@ -134,14 +141,15 @@ class InputActivity : AppCompatActivity() {
 
         val title = title_edit_text.text.toString()
         val content = content_edit_text.text.toString()
-        val category = category_edit_text.text.toString()
+        //val category = category_edit_text.text.toString()
 
         mTask!!.title = title
         mTask!!.contents = content
-        mTask!!.category = category
         val calendar = GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute)
         val date = calendar.time
         mTask!!.date = date
+
+        //mTask!!.category = category
 
         realm.copyToRealmOrUpdate(mTask!!)
         realm.commitTransaction()

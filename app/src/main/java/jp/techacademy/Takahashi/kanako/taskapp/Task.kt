@@ -11,7 +11,7 @@ open class Task : RealmObject(), Serializable{
     var contents: String = ""
     var date: Date = Date()
 
-    var category: String =""
+    //var category: String =""
 
 
     @PrimaryKey
