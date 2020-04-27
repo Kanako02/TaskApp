@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.widget.ArrayAdapter
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_input.*
@@ -27,7 +28,7 @@ class InputActivity : AppCompatActivity() {
     private var mTask: Task? = null
 
     //カテゴリークラスのオブジェクト
-    private var mCategory:Category? =null
+    //private var mCategory:Category? =null
 
     private val mOnDateClickListener = View.OnClickListener {
         val datePickerDialog = DatePickerDialog(this,
@@ -64,7 +65,7 @@ class InputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input)
 
-            category_button.setOnClickListener { view ->
+        category_button.setOnClickListener { view ->
             val intent = Intent(this@InputActivity, CategoryActivity::class.java)
             startActivity(intent)
         }
@@ -86,6 +87,7 @@ class InputActivity : AppCompatActivity() {
         val taskId = intent.getIntExtra(EXTRA_TASK, -1)
         val realm = Realm.getDefaultInstance()
         mTask = realm.where(Task::class.java).equalTo("id", taskId).findFirst()
+
         realm.close()
 
         if (mTask == null) {
@@ -110,13 +112,31 @@ class InputActivity : AppCompatActivity() {
             mHour = calendar.get(Calendar.HOUR_OF_DAY)
             mMinute = calendar.get(Calendar.MINUTE)
 
-            val dateString = mYear.toString() + "/" + String.format("%02d", mMonth + 1) + "/" + String.format("%02d", mDay)
+            val dateString = mYear.toString() + "/" + String.format(
+                "%02d",
+                mMonth + 1
+            ) + "/" + String.format("%02d", mDay)
             val timeString = String.format("%02d", mHour) + ":" + String.format("%02d", mMinute)
 
             date_button.text = dateString
             times_button.text = timeString
         }
+
+
+//登録したカテゴリーをSpinnerに表示させる
+        val categoryRealmResults = realm.where(Category::class.java).findAll()
+
+        var mutableList = mutableListOf<String>()
+
+
+        val adapter = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
+            mutableList
+        )
+
     }
+
 
     //タスク
     private fun addTask() {
@@ -141,15 +161,12 @@ class InputActivity : AppCompatActivity() {
 
         val title = title_edit_text.text.toString()
         val content = content_edit_text.text.toString()
-        //val category = category_edit_text.text.toString()
 
         mTask!!.title = title
         mTask!!.contents = content
         val calendar = GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute)
         val date = calendar.time
         mTask!!.date = date
-
-        //mTask!!.category = category
 
         realm.copyToRealmOrUpdate(mTask!!)
         realm.commitTransaction()
@@ -167,7 +184,13 @@ class InputActivity : AppCompatActivity() {
 
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, resultPendingIntent)
+
+
+
+
     }
+
+
 
 
 

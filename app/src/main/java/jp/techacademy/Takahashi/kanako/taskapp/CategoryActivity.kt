@@ -33,7 +33,6 @@ class CategoryActivity : AppCompatActivity() {
         realm.beginTransaction()
 
         if (mCategory == null) {
-            // 新規作成の場合
             mCategory = Category()
 
             val categoryRealmResults = realm.where(Category::class.java).findAll()
