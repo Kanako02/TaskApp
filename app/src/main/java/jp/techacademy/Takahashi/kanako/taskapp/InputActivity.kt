@@ -9,11 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.ArrayAdapter
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_input.*
-import kotlinx.android.synthetic.main.content_inputcategory.*
 import java.util.*
 
 class InputActivity : AppCompatActivity() {
@@ -27,8 +24,8 @@ class InputActivity : AppCompatActivity() {
     //タスククラスのオブジェクト
     private var mTask: Task? = null
 
-    //カテゴリークラスのオブジェクト
-    //private var mCategory:Category? =null
+    //カテゴリーアダプター
+    private lateinit var mCategoryAdapter: CategoryAdapter
 
     private val mOnDateClickListener = View.OnClickListener {
         val datePickerDialog = DatePickerDialog(this,
@@ -120,19 +117,11 @@ class InputActivity : AppCompatActivity() {
         }
 
 
-//登録したカテゴリーをSpinnerに表示させる
-        val categoryRealmResults = realm.where(Category::class.java).findAll()
-
-        var mutableList = mutableListOf<String>()
-
-
-        val adapter = ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_spinner_item,
-            mutableList
-        )
+//カテゴリーアダプターの設定
+        mCategoryAdapter = CategoryAdapter(this@InputActivity)
 
     }
+
 
 
     //タスク
