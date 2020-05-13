@@ -18,21 +18,23 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="タイトル" />
+
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_edit_text"
+        android:spinnerMode="dialog">
+    </Spinner>
+
     <EditText
         android:id="@+id/content_edit_text"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:layout_below="@id/title_edit_text"
-        android:hint="内容" />
-
-    <Spinner
-        android:id="@+id/action_bar_spinner"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/content_edit_text"
-        android:spinnerMode="dialog">
-
-    </Spinner>
+        android:layout_below="@id/spinner"
+        android:layout_marginTop="-1dp"
+        android:hint="内容" />
 
 
     <Button

@@ -23,19 +23,12 @@
       android:orientation="horizontal">
 
       <Spinner
-          android:id="@+id/action_bar_spinner"
-          android:layout_width="300dp"
+          android:id="@+id/spinner1"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:spinnerMode="dialog">
+          android:spinnerMode="dropdown">
 
       </Spinner>
-
-      <Button
-          android:id="@+id/search_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_toRightOf="@id/action_bar_spinner"
-          android:text="検索"/>
 
   </LinearLayout>
 

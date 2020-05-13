@@ -6,11 +6,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Button
 import io.realm.Realm
 import io.realm.RealmChangeListener
+import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_input.*
 
 const val EXTRA_TASK = "jp.techacademy.taro.Takahashi.kanako.TASK"
 
@@ -24,6 +28,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var mTaskAdapter: TaskAdapter
+
+    //追加
+    lateinit var mCategoryAdapter : CategoryAdapter
+
+    lateinit var categoryRealmResults: RealmResults<Category>
+
+    var selectCategory : Category?=null
+
+    private var mTask: Task? = null
+
+    //保存用
+    var listsave = listOf<Task>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         // ListViewの設定
         mTaskAdapter = TaskAdapter(this)
+        mCategoryAdapter = CategoryAdapter(this@MainActivity)
 
         // ListViewをタップしたときの処理
         listView1.setOnItemClickListener { parent, _, position, _ ->
@@ -50,6 +68,38 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_TASK, task.id)
             startActivity(intent)
         }
+
+        // spinner に adapter をセット
+        spinner1.adapter = mCategoryAdapter
+
+        mTask?.category?.let {spinner.setSelection(it.id,false) }
+
+        // リスナーを登録
+        spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            //　アイテムが選択された時
+            override fun onItemSelected(parent: AdapterView<*>?,
+                                        view: View?, position: Int, id: Long) {
+                val newList =
+                    if (mCategoryAdapter.categoryList[position].category == ""){
+                        listsave
+                    }
+                    else {
+                        listsave.filter { it.category?.category == mCategoryAdapter.categoryList[position].category }
+                    }
+
+                // 上記の結果を、TaskList としてセットする
+                mTaskAdapter.taskList = newList as MutableList<Task>
+                // TaskのListView用のアダプタに渡す
+                listView1.adapter = mTaskAdapter
+                // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+                mTaskAdapter.notifyDataSetChanged()
+            }
+
+            //　アイテムが選択されなかった
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
 
         // ListViewを長押ししたときの処理
         listView1.setOnItemLongClickListener { parent, _, position, _ ->
@@ -126,9 +176,27 @@ class MainActivity : AppCompatActivity() {
         // TaskのListView用のアダプタに渡す
         listView1.adapter = mTaskAdapter
 
+        //追加
+        mTaskAdapter.taskList = mRealm.copyFromRealm(taskRealmResults)
+        listsave = mRealm.copyFromRealm(taskRealmResults)
+
         // 表示を更新するために、アダプターにデータが変更されたことを知らせる
         mTaskAdapter.notifyDataSetChanged()
+
+
+        categoryRealmResults = mRealm.where(Category::class.java).findAll()
+        mCategoryAdapter.categoryList.clear()
+        mCategoryAdapter.categoryList.add(Category())
+        // 上記の結果を、TaskList としてセットする
+        mCategoryAdapter.categoryList.addAll(mRealm.copyFromRealm(categoryRealmResults))
+
+        spinner1.adapter = mCategoryAdapter
+
+        mCategoryAdapter.notifyDataSetChanged()
+
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

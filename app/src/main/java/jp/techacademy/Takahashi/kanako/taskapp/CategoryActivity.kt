@@ -25,6 +25,7 @@ class CategoryActivity : AppCompatActivity() {
 
         // UI部品の設定
         addcate_button.setOnClickListener(mOnCategoryClickListener)
+
     }
 
     private fun addCategory() {

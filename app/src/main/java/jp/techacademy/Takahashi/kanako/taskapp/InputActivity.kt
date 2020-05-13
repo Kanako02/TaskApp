@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.widget.AdapterView
 import io.realm.Realm
+import io.realm.RealmChangeListener
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.content_input.*
 import java.util.*
 
@@ -26,6 +29,20 @@ class InputActivity : AppCompatActivity() {
 
     //カテゴリーアダプター
     private lateinit var mCategoryAdapter: CategoryAdapter
+
+    //追加
+    private lateinit var mRealm: Realm
+    //mRealmListenerはRealmのデータベースに追加や削除など変化があった場合に呼ばれるリスナー
+    private val mRealmListener = object : RealmChangeListener<Realm> {
+        override fun onChange(element: Realm) {
+            reloadListView()
+        }
+    }
+
+    var selectCategory : Category?=null
+
+    lateinit var categoryRealmResults: RealmResults<Category>
+
 
     private val mOnDateClickListener = View.OnClickListener {
         val datePickerDialog = DatePickerDialog(this,
@@ -51,11 +68,10 @@ class InputActivity : AppCompatActivity() {
     }
 
     private val mOnDoneClickListener = View.OnClickListener {
+        mRealm.removeChangeListener(mRealmListener)
         addTask()
         finish()
     }
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +82,13 @@ class InputActivity : AppCompatActivity() {
             val intent = Intent(this@InputActivity, CategoryActivity::class.java)
             startActivity(intent)
         }
+
+        // Realmの設定
+        mRealm = Realm.getDefaultInstance()
+        mRealm.addChangeListener(mRealmListener)
+
+        mCategoryAdapter = CategoryAdapter(this@InputActivity)
+
 
         // ActionBarを設定する
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -109,18 +132,57 @@ class InputActivity : AppCompatActivity() {
             mHour = calendar.get(Calendar.HOUR_OF_DAY)
             mMinute = calendar.get(Calendar.MINUTE)
 
-            val dateString = mYear.toString() + "/" + String.format("%02d", mMonth + 1) + "/" + String.format("%02d", mDay)
+            val dateString = mYear.toString() + "/" + String.format(
+                "%02d",
+                mMonth + 1
+            ) + "/" + String.format("%02d", mDay)
             val timeString = String.format("%02d", mHour) + ":" + String.format("%02d", mMinute)
 
             date_button.text = dateString
             times_button.text = timeString
+            selectCategory = mTask!!.category
         }
 
+        reloadListView()
 
-//カテゴリーアダプターの設定
-        mCategoryAdapter = CategoryAdapter(this@InputActivity)
+        spinner.adapter = mCategoryAdapter
+
+        selectCategory?.let {spinner.setSelection(it.id+1,false) }
+//        spinner.setSelection(position,false)
+
+
+        // リスナーを登録
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            //　アイテムが選択された時
+            override fun onItemSelected(parent: AdapterView<*>?,
+                                        view: View?, position: Int, id: Long) {
+                selectCategory = mCategoryAdapter.categoryList[position]
+                // Kotlin Android Extensions
+            }
+
+            //　アイテムが選択されなかった
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
 
     }
+
+    private fun reloadListView() {
+//        mCategoryAdapter.categoryList.clear()
+        // Realmデータベースから、「全てのデータを取得して新しい日時順に並べた結果」を取得
+        categoryRealmResults = mRealm.where(Category::class.java).findAll()
+        mCategoryAdapter.categoryList.clear()
+        mCategoryAdapter.categoryList.add(Category().apply { id = -1; category = "カテゴリーの選択" })
+        // 上記の結果を、TaskList としてセットする
+        mCategoryAdapter.categoryList.addAll(mRealm.copyFromRealm(categoryRealmResults))
+        // TaskのListView用のアダプタに渡す
+        spinner.adapter = mCategoryAdapter
+
+        // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+        mCategoryAdapter.notifyDataSetChanged()
+    }
+
+
 
 
 
@@ -147,6 +209,11 @@ class InputActivity : AppCompatActivity() {
 
         val title = title_edit_text.text.toString()
         val content = content_edit_text.text.toString()
+
+        selectCategory?.let { if(it.id != -1){ val result = mRealm.where(Category::class.java).equalTo("id", selectCategory!!.id).findFirst()
+            mRealm.copyFromRealm(categoryRealmResults)
+            mTask!!.category = result
+        } }
 
         mTask!!.title = title
         mTask!!.contents = content
