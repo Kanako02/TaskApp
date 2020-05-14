@@ -154,14 +154,11 @@ class InputActivity : AppCompatActivity() {
         // リスナーを登録
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             //　アイテムが選択された時
-            override fun onItemSelected(parent: AdapterView<*>?,
-                                        view: View?, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectCategory = mCategoryAdapter.categoryList[position]
-                // Kotlin Android Extensions
             }
-
             //　アイテムが選択されなかった
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+           override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 
@@ -238,13 +235,6 @@ class InputActivity : AppCompatActivity() {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, resultPendingIntent)
 
-
-
-
     }
-
-
-
-
-
+    
 }

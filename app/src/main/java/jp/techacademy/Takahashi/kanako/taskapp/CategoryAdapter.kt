@@ -19,6 +19,20 @@ class CategoryAdapter (context: Context): BaseAdapter() {
         this.mLayoutInflater = LayoutInflater.from(context)
     }
 
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val view: View = convertView ?: mLayoutInflater.inflate(R.layout.simple_list_item_1, null)
+
+        val textView1 = view.findViewById<TextView>(R.id.text1)
+
+
+        textView1.text = categoryList[position].category
+
+
+
+
+        return view
+    }
+
     //mTaskListのサイズ
     override fun getCount(): Int {
         return categoryList.size
@@ -34,23 +48,4 @@ class CategoryAdapter (context: Context): BaseAdapter() {
         return categoryList[position].id.toLong()
     }
 
-
-
-    //convertViewがnullのときはLayoutInflaterを使ってsimple_list_item_2からViewを取得
-    //simple_list_item_2はタイトルとサブタイトルがあるセルです。まずはString型で保持しているtaskListから文字列を取得しタイトルを設定
-    //getViewメソッドではTaskのタイトルと時間をTextViewに設定
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        //convertViewは現在表示しようとしている行がnullかどうか判定を行っているのは、BaseAdapterにViewを再利用して描画する仕組みがあるため
-        val view: View = convertView ?: mLayoutInflater.inflate(R.layout.simple_list_item_1, null)
-
-        val textView1 = view.findViewById<TextView>(R.id.text1)
-
-
-        textView1.text = categoryList[position].category
-
-
-
-
-        return view
-    }
 }

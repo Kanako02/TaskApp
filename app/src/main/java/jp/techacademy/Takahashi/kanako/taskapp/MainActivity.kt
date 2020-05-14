@@ -34,8 +34,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var categoryRealmResults: RealmResults<Category>
 
-    var selectCategory : Category?=null
-
     private var mTask: Task? = null
 
     //保存用
